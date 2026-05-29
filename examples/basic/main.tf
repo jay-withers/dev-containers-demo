@@ -9,7 +9,3 @@ module "resource_group" {
     managed_by  = "terraform"
   }
 }
-
-output "resource_group_id" {
-  value = module.resource_group.id
-}
