@@ -47,7 +47,7 @@ repos:
 
       - id: terraform-standards
         name: terraform-standards
-        entry: sh .devcontainer/terraform-standards.sh
+        entry: sh scripts/terraform-standards.sh
         language: system
         files: \.tf$
         pass_filenames: false
