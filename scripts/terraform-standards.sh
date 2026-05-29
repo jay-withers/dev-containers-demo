@@ -1,7 +1,7 @@
 #!/bin/sh
-# Enforces Terraform file naming standards for data, outputs, locals, and variables.
-# Any .tf file containing a given block type must be named with the matching prefix.
-# e.g. output blocks may only appear in outputs.tf, outputs-networking.tf, etc.
+# Enforces Terraform file naming standards.
+# Files must be named with the matching prefix, using . as the separator.
+# e.g. output blocks may only appear in outputs.tf, outputs.networking.tf, etc.
 
 FAILED=0
 
@@ -26,9 +26,12 @@ check() {
     fi
 }
 
-check "data"          '^data "'      '/data[^/]*\.tf$'
-check "outputs"       '^output "'    '/outputs[^/]*\.tf$'
-check "locals"        '^locals {'    '/locals[^/]*\.tf$'
-check "variables"     '^variable "'  '/variables[^/]*\.tf$'
+# [^/-] ensures only . is used as a separator, not -
+check "data"          '^data "'      '/data[^/-]*\.tf$'
+check "outputs"       '^output "'    '/outputs[^/-]*\.tf$'
+check "locals"        '^locals {'    '/locals[^/-]*\.tf$'
+check "variables"     '^variable "'  '/variables[^/-]*\.tf$'
+check "resources"     '^resource "'  '/main[^/-]*\.tf$'
+check "modules"       '^module "'    '/main[^/-]*\.tf$'
 
 exit $FAILED
