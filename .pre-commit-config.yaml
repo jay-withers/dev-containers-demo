@@ -44,3 +44,10 @@ repos:
         entry: shellcheck
         language: system
         types: [shell]
+
+      - id: terraform-standards
+        name: terraform-standards
+        entry: sh .devcontainer/terraform-standards.sh
+        language: system
+        files: \.tf$
+        pass_filenames: false
