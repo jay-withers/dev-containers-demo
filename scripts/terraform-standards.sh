@@ -1,5 +1,5 @@
 #!/bin/sh
-# Enforces Terraform file naming standards.
+# Enforces Terraform file naming standards
 # Files must be named with the matching prefix, using . as the separator.
 # e.g. output blocks may only appear in outputs.tf, outputs.networking.tf, etc.
 
