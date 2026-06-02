@@ -18,7 +18,8 @@
         "timonwong.shellcheck",
         "redhat.vscode-yaml",
         "eamodio.gitlens",
-        "ms-vscode.powershell"
+        "ms-vscode.powershell",
+        "anthropic.claude-code"
       ],
       "settings": {
         "editor.formatOnSave": true,
