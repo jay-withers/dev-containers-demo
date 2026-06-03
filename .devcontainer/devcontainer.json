@@ -4,7 +4,9 @@
     "dockerfile": "Dockerfile"
   },
   "remoteUser": "vscode",
-  "runArgs": ["--security-opt=no-new-privileges:true"],
+  "runArgs": [
+    "--security-opt=no-new-privileges:true"
+  ],
   "mounts": [
     "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
   ],
@@ -19,7 +21,8 @@
         "redhat.vscode-yaml",
         "eamodio.gitlens",
         "ms-vscode.powershell",
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "DavidAnson.vscode-markdownlint"
       ],
       "settings": {
         "editor.formatOnSave": true,
