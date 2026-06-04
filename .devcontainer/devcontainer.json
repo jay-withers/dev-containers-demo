@@ -22,8 +22,7 @@
         "ms-vscode.powershell",
         "anthropic.claude-code",
         "DavidAnson.vscode-markdownlint",
-        "ms-azuretools.vscode-azure-mcp-server",
-        "ms-vscode.vscode-json"
+        "ms-azuretools.vscode-azure-mcp-server"
       ],
       "settings": {
         "editor.formatOnSave": true,
