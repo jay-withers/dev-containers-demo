@@ -22,7 +22,8 @@
         "eamodio.gitlens",
         "ms-vscode.powershell",
         "anthropic.claude-code",
-        "DavidAnson.vscode-markdownlint"
+        "DavidAnson.vscode-markdownlint",
+        "ms-azuretools.vscode-azure-mcp-server"
       ],
       "settings": {
         "editor.formatOnSave": true,
