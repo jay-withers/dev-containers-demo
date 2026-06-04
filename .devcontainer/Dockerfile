@@ -1,12 +1,13 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
+ARG AZ_PS_URL="https://github.com/Azure/azure-powershell/releases/download/v16.0.0-June2026/Az-Cmdlets-16.0.0.40905.tar.gz@sha256:bb3f0a902de043aa2279108dff240311e21abb69b6e292bd477b6481a4b1b66b"
 ARG AZURE_CLI_URL="https://packages.microsoft.com/repos/azure-cli/pool/main/a/azure-cli/azure-cli_2.73.0-1~noble_arm64.deb@sha256:6af9009a39895ba396e92d5138824091e95f9bd797422db2fe9564a0cf4a35f4"
 ARG CHECKOV_URL="https://github.com/bridgecrewio/checkov/releases/download/3.2.529/checkov_linux_arm64.zip@sha256:fff55b064eadfc14ce35da9b9744dedf82fb50c25447076149480ad92c06a6a9"
-ARG PRE_COMMIT_URL="https://github.com/pre-commit/pre-commit/releases/download/v3.7.1/pre-commit-3.7.1.pyz@sha256:a0349324f0f53b08d00eb473b5f6646c8a07f3253703c09b977b0b9b9476d486"
 ARG POWERSHELL_URL="https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/powershell-7.4.6-linux-arm64.tar.gz@sha256:c0159b03e85f44ae1e7697818a011558da6c813d0aae848bf5ac13bf435d8624"
+ARG PRE_COMMIT_URL="https://github.com/pre-commit/pre-commit/releases/download/v3.7.1/pre-commit-3.7.1.pyz@sha256:a0349324f0f53b08d00eb473b5f6646c8a07f3253703c09b977b0b9b9476d486"
 ARG SHELLCHECK_URL="https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.aarch64.tar.xz@sha256:324a7e89de8fa2aed0d0c28f3dab59cf84c6d74264022c00c22af665ed1a09bb"
-ARG TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.15.5/terraform_1.15.5_linux_arm64.zip@sha256:06e7b48de826146c6d9331ba35b13da12332d8392be30d1dd6b789ba4713fff0"
 ARG TERRAFORM_DOCS_URL="https://github.com/terraform-docs/terraform-docs/releases/download/v0.24.0/terraform-docs-v0.24.0-linux-arm64.tar.gz@sha256:d12bd7b73c1fc9c64efc79f8157dd713dabd559f1ecf3cfc0f42e32279a155fd"
+ARG TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.15.5/terraform_1.15.5_linux_arm64.zip@sha256:06e7b48de826146c6d9331ba35b13da12332d8392be30d1dd6b789ba4713fff0"
 ARG TFLINT_URL="https://github.com/terraform-linters/tflint/releases/download/v0.61.0/tflint_linux_arm64.zip@sha256:999c25cfdb5208fe1133dec6b219e666a39fc2a7a0786a781dc9924ea5945ebf"
 ARG TRIVY_URL="https://github.com/aquasecurity/trivy/releases/download/v0.69.3/trivy_0.69.3_Linux-ARM64.tar.gz@sha256:7e3924a974e912e57b4a99f65ece7931f8079584dae12eb7845024f97087bdfd"
 
@@ -103,5 +104,23 @@ RUN URL="${TERRAFORM_DOCS_URL%@sha256:*}" \
     && chmod +x /usr/local/bin/terraform-docs \
     && rm /tmp/terraform-docs.tar.gz \
     && terraform-docs --version
+
+# azure-powershell modules with pinned SHA256 digest
+RUN URL="${AZ_PS_URL%@sha256:*}" \
+    && SHA="${AZ_PS_URL##*@sha256:}" \
+    && curl -fsSL "${URL}" -o /tmp/az-cmdlets.tar.gz \
+    && (cd /tmp && echo "${SHA}  az-cmdlets.tar.gz" | sha256sum -c) \
+    && mkdir -p /tmp/az-nupkgs \
+    && tar -xz -C /tmp/az-nupkgs -f /tmp/az-cmdlets.tar.gz \
+    && for nupkg in /tmp/az-nupkgs/*.nupkg; do \
+         name=$(basename "$nupkg" .nupkg); \
+         version=$(echo "$name" | rev | cut -d. -f1-3 | rev); \
+         module=$(echo "$name" | rev | cut -d. -f4- | rev); \
+         dest="/usr/local/share/powershell/Modules/${module}/${version}"; \
+         mkdir -p "$dest"; \
+         unzip -q "$nupkg" -d "$dest"; \
+       done \
+    && rm -rf /tmp/az-nupkgs /tmp/az-cmdlets.tar.gz \
+    && pwsh -Command "Get-Module Az -ListAvailable | Select-Object -First 1 Name, Version"
 
 USER vscode
