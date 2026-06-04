@@ -13,7 +13,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "hashicorp.terraform",
         "ms-azuretools.vscode-azureterraform",
         "ms-azuretools.vscode-azureresourcegroups",
         "ms-azure-devops.azure-pipelines",
