@@ -11,6 +11,7 @@ ARG TERRAFORM_DOCS_URL="https://github.com/terraform-docs/terraform-docs/release
 ARG TERRAFORM_URL="https://releases.hashicorp.com/terraform/1.15.5/terraform_1.15.5_linux_arm64.zip@sha256:06e7b48de826146c6d9331ba35b13da12332d8392be30d1dd6b789ba4713fff0"
 ARG TFLINT_URL="https://github.com/terraform-linters/tflint/releases/download/v0.61.0/tflint_linux_arm64.zip@sha256:999c25cfdb5208fe1133dec6b219e666a39fc2a7a0786a781dc9924ea5945ebf"
 ARG TRIVY_URL="https://github.com/aquasecurity/trivy/releases/download/v0.69.3/trivy_0.69.3_Linux-ARM64.tar.gz@sha256:7e3924a974e912e57b4a99f65ece7931f8079584dae12eb7845024f97087bdfd"
+ARG NODE_URL="https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-arm64.tar.xz@sha256:524659219d6a207a7400f2bde15d19ba060ffbe0d32a8643319ad67e3bb64c78"
 
 # Base dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -133,5 +134,14 @@ RUN URL="${GH_CLI_URL%@sha256:*}" \
     && rm /tmp/gh.deb \
     && rm -rf /var/lib/apt/lists/* \
     && gh --version
+
+# node with pinned SHA256 digest
+RUN URL="${NODE_URL%@sha256:*}" \
+    && SHA="${NODE_URL##*@sha256:}" \
+    && curl -fsSL "${URL}" -o /tmp/node.tar.xz \
+    && (cd /tmp && echo "${SHA}  node.tar.xz" | sha256sum -c) \
+    && tar -xJ -C /usr/local --strip-components=1 -f /tmp/node.tar.xz \
+    && rm /tmp/node.tar.xz \
+    && node --version
 
 USER vscode
