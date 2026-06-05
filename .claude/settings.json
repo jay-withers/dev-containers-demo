@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "A file was just edited. If the file is README.md, do nothing. Otherwise, check whether the change affects how the project works, how it is used, or how it is configured — and if so, remind Claude to update README.md to reflect the change."
+          }
+        ]
+      }
+    ]
+  }
+}
