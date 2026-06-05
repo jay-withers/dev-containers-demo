@@ -22,7 +22,6 @@
         "ms-vscode.powershell",
         "anthropic.claude-code",
         "DavidAnson.vscode-markdownlint",
-        "ms-azuretools.vscode-azure-mcp-server",
         "hashicorp.terraform"
       ],
       "settings": {
