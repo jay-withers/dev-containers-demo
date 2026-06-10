@@ -59,24 +59,14 @@ terraform plan
 
 This repo includes a dev container with all required tooling pre-installed at pinned versions with SHA256 digest verification. No local tool installation is required beyond Docker.
 
+### Prerequisites
+
+1. Your host machine must have [Docker](https://www.docker.com/get-started/) installed and running
+1. Your host machine must have a git identity configured (`user.name` and `user.email`). The container reads these from the host at startup and fails with a clear message if they are missing.
+
 ### Getting started
 
 Open the repo in VS Code and select **Reopen in Container**.
-
-> **Prerequisite**: your host machine must have a git identity configured (`user.name` and `user.email`). The container reads these from the host at startup and fails with a clear message if they are missing.
-
-### Mac — Colima (Docker Desktop alternative)
-
-```sh
-brew install docker colima
-colima start
-```
-
-To start Colima automatically on login:
-
-```sh
-brew services start colima
-```
 
 ### Tooling
 
