@@ -1,53 +1,115 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-json
-      - id: check-merge-conflict
       - id: check-added-large-files
+        args: ["--maxkb=500"]
+
+      - id: check-case-conflict
+
+      - id: check-json
+        # Exclude non-standard JSON
+        exclude: |
+          (?x)^(
+              .devcontainer/devcontainer.json|
+              .vscode/tasks.json
+          )$
+
+      - id: check-merge-conflict
+
+      - id: check-symlinks
+
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+
+      - id: end-of-file-fixer
+
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --indent=2
+        # Exclude non-standard JSON
+        exclude: |
+          (?x)^(
+              .devcontainer/devcontainer.json|
+              .vscode/tasks.json
+          )$
+
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      - id: check-shebang-scripts-are-executable
+
+      - id: check-executables-have-shebangs
+
+      - id: no-commit-to-branch
+        args: [--branch, main]
+
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+      - id: forbid-new-submodules
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 2ca41cc1372d1e939a6a879f18cdc19fc1cac1ce # frozen: v8.30.0
+    hooks:
+      - id: gitleaks
+        args: [--config=config/.gitleaks.toml]
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 943377262562a12b57292fc98fabd7dbf81451fe # frozen: 0.37.2
+    hooks:
+      - id: check-azure-pipelines
+
+      - id: check-renovate
+
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: 1d7031e6d0bbfce76e5a625b0cec24fb22e517a0 # frozen: v9.25.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ["@commitlint/config-conventional"]
+        args:
+          - --config
+          - config/commitlint.config.js
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: d61ded22bf9aa0f757303ebcbb0d6d71c4b54015 # frozen: v1.106.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+          - --args=-write=true
+
+      - id: terraform_validate
+        name: Terraform validate
+        args:
+          - --args=-json
+          - --args=-no-color
+          - --hook-config=--retry-once-with-cleanup=true
+
+      - id: terraform_docs
+        args:
+          - --hook-config=--create-file-if-not-exist=true
+          - --args=--config=config/.terraform-docs.yml
 
   - repo: local
     hooks:
-      - id: terraform-fmt
-        name: terraform fmt
-        entry: terraform fmt -check -recursive
-        language: system
-        files: \.tf(vars)?$
-        pass_filenames: false
+      - id: terraform_tflint
+        name: TFLint (all environments)
+        language: script
+        entry: scripts/run_tflint.sh
+        files: \.(tf|tfvars)$
+        pass_filenames: true
 
-      - id: tflint
-        name: tflint
-        entry: tflint --recursive
-        language: system
-        files: \.tf$
-        pass_filenames: false
-
-      - id: checkov
-        name: checkov
-        entry: checkov -d . --quiet
-        language: system
-        files: \.tf(vars)?$
-        pass_filenames: false
-
-      - id: trivy
-        name: trivy
-        entry: trivy config --exit-code 1 --severity HIGH,CRITICAL --quiet .
-        language: system
-        files: \.tf(vars)?$
-        pass_filenames: false
-
-      - id: shellcheck
-        name: shellcheck
-        entry: shellcheck
-        language: system
-        types: [shell]
-
-      - id: terraform-standards
-        name: terraform-standards
-        entry: sh scripts/terraform-standards.sh
-        language: system
-        files: \.tf$
-        pass_filenames: false
+      - id: terraform_checkov
+        name: Terraform Checkov (all environments)
+        language: script
+        entry: scripts/run_checkov.sh
+        files: \.(tf|tfvars)$
+        pass_filenames: true
